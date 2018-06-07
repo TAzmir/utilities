@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfflineQueueExportRKSVEF", "src\at\OfflineQueueExportEFRKSV\OfflineQueueExportRKSVEF.csproj", "{CDCF9F78-717D-44E0-8974-9D6C2A55A7B3}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OfflineQueueExportRKSV", "src\at\OfflineQueueExportRKSV\OfflineQueueExportRKSV.shproj", "{CF927E0D-A66E-4532-B002-14285336E308}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfflineQueueExportRKSVSQLite", "src\at\OfflineQueueExportRKSVSQLite\OfflineQueueExportRKSVSQLite.csproj", "{5C8B1319-D652-4FC6-A79F-70484E8012A2}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\at\OfflineQueueExportRKSV\OfflineQueueExportRKSV.projitems*{5c8b1319-d652-4fc6-a79f-70484e8012a2}*SharedItemsImports = 4
+		src\at\OfflineQueueExportRKSV\OfflineQueueExportRKSV.projitems*{cdcf9f78-717d-44e0-8974-9d6c2a55a7b3}*SharedItemsImports = 4
+		src\at\OfflineQueueExportRKSV\OfflineQueueExportRKSV.projitems*{cf927e0d-a66e-4532-b002-14285336e308}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CDCF9F78-717D-44E0-8974-9D6C2A55A7B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDCF9F78-717D-44E0-8974-9D6C2A55A7B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDCF9F78-717D-44E0-8974-9D6C2A55A7B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDCF9F78-717D-44E0-8974-9D6C2A55A7B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C8B1319-D652-4FC6-A79F-70484E8012A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C8B1319-D652-4FC6-A79F-70484E8012A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C8B1319-D652-4FC6-A79F-70484E8012A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C8B1319-D652-4FC6-A79F-70484E8012A2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {45A40ED3-D709-44F1-810F-2304AA3C96CC}
+	EndGlobalSection
+EndGlobal
