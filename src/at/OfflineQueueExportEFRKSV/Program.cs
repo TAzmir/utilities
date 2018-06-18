@@ -10,50 +10,18 @@ namespace OfflineQueueExportRKSV
     {
         static void Main(string[] args)
         {
-
-            //TODO read from commandline
-
-            Console.Write("QueueId:");
-            Guid id = Guid.Parse(Console.ReadLine());
-
-            Console.WriteLine("SQL-Connectionstring:");
-            string connectionString = Console.ReadLine();
+            var options = ProgramOptions.GetOptionsFromCommandLine(args);
 
             Dictionary<string, object> configuration = new Dictionary<string, object>();
             //encrypted connection string => connectionstring
-            configuration.Add("connectionstring", Convert.ToBase64String(fiskaltrust.service.storage.Encryption.Encrypt(System.Text.Encoding.UTF8.GetBytes(connectionString), id.ToByteArray())));
+            configuration.Add("connectionstring", Convert.ToBase64String(fiskaltrust.service.storage.Encryption.Encrypt(System.Text.Encoding.UTF8.GetBytes(options.ConnectionString), options.QueueId.ToByteArray())));
 
-
-            Console.WriteLine("CashBoxIdentification:");
-            string cashboxIdentification = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(cashboxIdentification))
-            {
-                cashboxIdentification = null;
-            }
-
-            Console.WriteLine("CashBoxKeyBase64:");
-            string cashboxKeyBase64 = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(cashboxKeyBase64))
-            {
-                cashboxKeyBase64 = null;
-            }
-
-            Console.WriteLine("CertificateBase64:");
-            string certificateBase64 = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(certificateBase64))
-            {
-                certificateBase64 = null;
-            }
-
-            Console.WriteLine("OutputFilename:");
-            string outputFilename = Console.ReadLine();
-
-            var storage = new fiskaltrust.service.storage(id, configuration);
+            var storage = new fiskaltrust.service.storage(options.QueueId, configuration);
 
             var dep7 = new DEP7();
-            dep7.ReceiptGroups.Add(DEP7.ReceiptGroup.Create(id, cashboxIdentification, cashboxKeyBase64, certificateBase64, storage.JournalATTableByTimeStamp().OrderBy(j => j.TimeStamp).Select(j => string.Concat(j.JWSHeaderBase64url, ".", j.JWSPayloadBase64url, ".", j.JWSSignatureBase64url))));
+            dep7.ReceiptGroups.Add(DEP7.ReceiptGroup.Create(options.QueueId, options.CashboxIdentification, options.CashBoxKeyBase64, options.CertificateBase64, storage.JournalATTableByTimeStamp().OrderBy(j => j.TimeStamp).Select(j => string.Concat(j.JWSHeaderBase64url, ".", j.JWSPayloadBase64url, ".", j.JWSSignatureBase64url))));
 
-            using (var fs = new System.IO.FileStream(outputFilename, System.IO.FileMode.Create))
+            using (var fs = new System.IO.FileStream(options.OutputFilename, System.IO.FileMode.Create))
             {
                 using (var sw = new System.IO.StreamWriter(fs))
                 using (var jw = new JsonTextWriter(sw))
@@ -65,9 +33,9 @@ namespace OfflineQueueExportRKSV
             }
 
             decimal TurnoverTotal = 0.0m;
-            byte[] CashBoxKeyBytes = Convert.FromBase64String(cashboxKeyBase64);
+            byte[] CashBoxKeyBytes = Convert.FromBase64String(options.CashBoxKeyBase64);
 
-            using (var fs = new System.IO.FileStream($"{outputFilename}.turnover", System.IO.FileMode.Create))
+            using (var fs = new System.IO.FileStream($"{options.OutputFilename}.turnover", System.IO.FileMode.Create))
             using (var sw = new System.IO.StreamWriter(fs, Encoding.UTF8))
             {
                 sw.WriteLine("ReceiptIdentification;LastTotal;Normal;Reduced1;Reduced2;Zero;Special;Sum(Parts);LastTotal+Sum(Parts);DecodedTotal;Error");

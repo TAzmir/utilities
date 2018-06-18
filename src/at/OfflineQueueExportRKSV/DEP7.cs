@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace OfflineQueueExportRKSV
@@ -44,6 +45,13 @@ namespace OfflineQueueExportRKSV
                 }
             }
 
+            private void Append(Stream stream, string text, System.Text.Encoding encoder = null)
+            {
+                if (encoder == null) encoder = System.Text.Encoding.UTF8;
+
+                var arr = encoder.GetBytes(text);
+                stream.Write(arr, 0, arr.Length);
+            }
 
             private void Load(IEnumerable<string> jwsLines)
             {
@@ -52,93 +60,100 @@ namespace OfflineQueueExportRKSV
                 string lastJWS = null;
                 string lastHash = null;
                 string lastReceiptNumber = null;
-                decimal turnover = 0.0m;
 
-
-                foreach (var jws in jwsLines)
+                using (var ReceiptsStream =  new System.IO.FileStream(ReceiptsFilename, FileMode.Append, FileAccess.Write, FileShare.None))
+                using (var WarningsStream = new System.IO.FileStream(WarningsFilename, FileMode.Append, FileAccess.Write, FileShare.None))
+                using (var PayloadsStream = new System.IO.FileStream(PayloadsFilename, FileMode.Append, FileAccess.Write, FileShare.None))
                 {
-                    try
+                    foreach (var jws in jwsLines)
                     {
-
-                        string qr = fiskaltrust.ifPOS.Utilities.AT_RKSV_Signature_ToDEP(jws, true);
-                        if (string.IsNullOrWhiteSpace(qr))
+                        try
                         {
-                            System.IO.File.AppendAllText(WarningsFilename, $"JWS {jws} cannot be converted to QR{Environment.NewLine}");
-                            continue;
-                        }
 
-                        System.IO.File.AppendAllText(PayloadsFilename, $"{qr}{Environment.NewLine}");
-
-                        string Revision = null;
-                        string ZDA = null;
-                        string CashBoxIdentification = null;
-                        string ReceiptIdentification = null;
-                        DateTime DateTimeIso;
-                        decimal TurnOverNormal = 0.0m;
-                        decimal TurnOverReduced1 = 0.0m;
-                        decimal TurnOverReduced2 = 0.0m;
-                        decimal TurnOverZero = 0.0m;
-                        decimal TurnOverSpecial = 0.0m;
-                        string TurnOverCounterBase64 = null;
-                        string CertificateSerialNumberHex = null;
-                        string PrevReceiptHashBase64 = null;
-                        string ReceiptSignatureBase64 = null;
-
-                        if (!fiskaltrust.ifPOS.Utilities.AT_RKSV_SplitReceipt(qr, out Revision, out ZDA, out CashBoxIdentification, out ReceiptIdentification, out DateTimeIso, out TurnOverNormal, out TurnOverReduced1, out TurnOverReduced2, out TurnOverZero, out TurnOverSpecial, out TurnOverCounterBase64, out CertificateSerialNumberHex, out PrevReceiptHashBase64, out ReceiptSignatureBase64))
-                        {
-                            System.IO.File.AppendAllText(WarningsFilename, $"QR {qr} cannot be splitted{Environment.NewLine}");
-                            continue;
-                        }
-
-                        if (lastJWS == jws)
-                        {
-                            //already processed entry
-                            continue;
-                        }
-
-                        if (CashBoxIdentification != CashboxIdentification)
-                        {
-                            System.IO.File.AppendAllText(WarningsFilename, $"Cashboxidentification {CashBoxIdentification} doesnt match queue {CashboxIdentification}{Environment.NewLine}");
-                            continue;
-                        }
-
-                        //TODO turnover counter
-                        //TODO checksignature
-
-                        if (lastHash != null)
-                        {
-                            //check for last hash
-                            if (lastHash != Convert.ToBase64String(fiskaltrust.ifPOS.Utilities.FromBase64urlString(PrevReceiptHashBase64)))
+                            string qr = fiskaltrust.ifPOS.Utilities.AT_RKSV_Signature_ToDEP(jws, true);
+                            if (string.IsNullOrWhiteSpace(qr))
                             {
-                                System.IO.File.AppendAllText(WarningsFilename, $"Chain broken between {lastReceiptNumber} and {ReceiptIdentification}{Environment.NewLine}");
+                                Append(WarningsStream, $"JWS {jws} cannot be converted to QR{Environment.NewLine}");
+                                continue;
+                            }
+
+                            Append(PayloadsStream, $"{qr}{Environment.NewLine}");
+
+                            string Revision = null;
+                            string ZDA = null;
+                            string CashBoxIdentification = null;
+                            string ReceiptIdentification = null;
+                            DateTime DateTimeIso;
+                            decimal TurnOverNormal = 0.0m;
+                            decimal TurnOverReduced1 = 0.0m;
+                            decimal TurnOverReduced2 = 0.0m;
+                            decimal TurnOverZero = 0.0m;
+                            decimal TurnOverSpecial = 0.0m;
+                            string TurnOverCounterBase64 = null;
+                            string CertificateSerialNumberHex = null;
+                            string PrevReceiptHashBase64 = null;
+                            string ReceiptSignatureBase64 = null;
+
+                            if (!fiskaltrust.ifPOS.Utilities.AT_RKSV_SplitReceipt(qr, out Revision, out ZDA, out CashBoxIdentification, out ReceiptIdentification, out DateTimeIso, out TurnOverNormal, out TurnOverReduced1, out TurnOverReduced2, out TurnOverZero, out TurnOverSpecial, out TurnOverCounterBase64, out CertificateSerialNumberHex, out PrevReceiptHashBase64, out ReceiptSignatureBase64))
+                            {
+                                Append(WarningsStream, $"QR {qr} cannot be splitted{Environment.NewLine}");
+                                continue;
+                            }
+
+                            if (lastJWS == jws)
+                            {
+                                //already processed entry
+                                continue;
+                            }
+
+                            if (CashBoxIdentification != CashboxIdentification)
+                            {
+                                Append(WarningsStream, $"Cashboxidentification {CashBoxIdentification} doesnt match queue {CashboxIdentification}{Environment.NewLine}");
+                                continue;
+                            }
+
+                            //TODO turnover counter
+                            //TODO checksignature
+
+                            if (lastHash != null)
+                            {
+                                //check for last hash
+                                if (lastHash != Convert.ToBase64String(fiskaltrust.ifPOS.Utilities.FromBase64urlString(PrevReceiptHashBase64)))
+                                {
+                                    Append(WarningsStream, $"Chain broken between {lastReceiptNumber} and {ReceiptIdentification}{Environment.NewLine}");
+                                }
+                            }
+                            else
+                            {
+                                Append(WarningsStream, $"First receipt {ReceiptIdentification}{Environment.NewLine}");
+                            }
+                            lastHash = fiskaltrust.ifPOS.Utilities.AT_RKSV_CreateReceiptHashBase64(jws);
+
+                            lastJWS = jws;
+                            lastReceiptNumber = ReceiptIdentification;
+
+                            Append(ReceiptsStream, $"{jws}{Environment.NewLine}");
+                        }
+                        catch (Exception x)
+                        {
+                            if (string.IsNullOrWhiteSpace(lastReceiptNumber))
+                            {
+                                Append(WarningsStream, $"Exception before first line: {x.Message}{Environment.NewLine}");
+                            }
+                            else
+                            {
+                                Append(WarningsStream, $"Exception after {lastReceiptNumber}: {x.Message}{Environment.NewLine}");
                             }
                         }
-                        else
-                        {
-                            System.IO.File.AppendAllText(WarningsFilename, $"First receipt {ReceiptIdentification}{Environment.NewLine}");
-                        }
-                        lastHash = fiskaltrust.ifPOS.Utilities.AT_RKSV_CreateReceiptHashBase64(jws);
 
-                        lastJWS = jws;
-                        lastReceiptNumber = ReceiptIdentification;
-
-                        System.IO.File.AppendAllText(ReceiptsFilename, $"{jws}{Environment.NewLine}");
-                    }
-                    catch (Exception x)
-                    {
-                        if (string.IsNullOrWhiteSpace(lastReceiptNumber))
-                        {
-                            System.IO.File.AppendAllText(WarningsFilename, $"Exception before first line: {x.Message}{Environment.NewLine}");
-                        }
-                        else
-                        {
-                            System.IO.File.AppendAllText(WarningsFilename, $"Exception after {lastReceiptNumber}: {x.Message}{Environment.NewLine}");
-                        }
                     }
 
+                    Append(WarningsStream, $"Last receipt {lastReceiptNumber}{Environment.NewLine}");
+
+                    ReceiptsStream.Flush();
+                    WarningsStream.Flush();
+                    PayloadsStream.Flush();
                 }
-
-                System.IO.File.AppendAllText(WarningsFilename, $"Last receipt {lastReceiptNumber}{Environment.NewLine}");
             }
 
 
