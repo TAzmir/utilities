@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWTProofingWithCertificate", "src\JWTProofingWithCertificate\JWTProofingWithCertificate.csproj", "{E47BDCD9-F59E-4D3C-8C8B-88A33AA795C0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F6D6800E-35DC-4C7C-BAE0-0CA3F012025D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWTProofingWithCertificate", "src\common\JWTProofingWithCertificate\JWTProofingWithCertificate.csproj", "{E47BDCD9-F59E-4D3C-8C8B-88A33AA795C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,6 +20,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E47BDCD9-F59E-4D3C-8C8B-88A33AA795C0} = {F6D6800E-35DC-4C7C-BAE0-0CA3F012025D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8FFCD9CA-242C-4DF6-936C-2ADDDFB206DC}
