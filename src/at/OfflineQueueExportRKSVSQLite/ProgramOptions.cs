@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -15,10 +16,10 @@ namespace OfflineQueueExportRKSV
         [Option(longName: "servicefolder", Required = true, HelpText = "ServiceFolder for the Export")]
         public string ServiceFolder { get; set; }
 
-        [Option(longName: "cashboxidentification", Required = false, HelpText = "CashboxIdentification of the CashBox")]
+        [Option(longName: "cashboxidentification", Required = true, HelpText = "CashboxIdentification of the CashBox")]
         public string CashboxIdentification { get; set; }
 
-        [Option(longName: "cashboxkeybase64", Required = false, HelpText = "CashBoxKeyBase64 for the CashBox")]
+        [Option(longName: "cashboxkeybase64", Required = true, HelpText = "CashBoxKeyBase64 for the CashBox")]
         public string CashBoxKeyBase64 { get; set; }
 
         [Option(longName: "certificatebase64", Required = false, HelpText = "CertificateBase64 for the CashBox")]
@@ -26,6 +27,8 @@ namespace OfflineQueueExportRKSV
 
         [Option(longName: "outputfilename", Required = true, HelpText = "OutputFilename for the Export")]
         public string OutputFilename { get; set; }
+
+        public const int MaxParamValueLength = 8 * 1024;
 
         public static ProgramOptions GetOptionsFromCommandLine(string[] args)
         {
@@ -38,6 +41,20 @@ namespace OfflineQueueExportRKSV
                   option = GetProgramOptionsFromReadLineLoop();
               });
             return option;
+        }
+
+        private static string ReadLine()
+        {
+            Stream inputStream = Console.OpenStandardInput(MaxParamValueLength);
+            byte[] bytes = new byte[MaxParamValueLength];
+            int outputLength = inputStream.Read(bytes, 0, MaxParamValueLength);
+            char[] chars = Encoding.UTF8.GetChars(bytes, 0, outputLength);
+            var result = new string(chars);
+            if (result.EndsWith(Environment.NewLine))
+            {
+                result = result.Substring(0, result.Length - Environment.NewLine.Length);
+            }
+            return result;
         }
 
         public static ProgramOptions GetProgramOptionsFromReadLineLoop()
@@ -58,7 +75,7 @@ namespace OfflineQueueExportRKSV
                         else
                             Console.Write($"{attr.LongName}:");
 
-                        value = Console.ReadLine();
+                        value = ReadLine();
                         if (string.IsNullOrWhiteSpace(value) && attr.Default != null)
                         {
                             Console.Error.WriteLine($"No value given for {attr.LongName}. Using Default Value: {attr.Default}");
