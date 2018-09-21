@@ -22,7 +22,7 @@ namespace OfflineQueueExportRKSV
                 var storage = new fiskaltrust.service.storage(options.QueueId, configuration);
 
                 var dep7 = new DEP7();
-                dep7.ReceiptGroups.Add(DEP7.ReceiptGroup.Create(options.QueueId, options.CashboxIdentification, options.CashBoxKeyBase64, options.CertificateBase64, storage.JournalATTableByTimeStamp().OrderBy(j => j.TimeStamp).Select(j => string.Concat(j.JWSHeaderBase64url, ".", j.JWSPayloadBase64url, ".", j.JWSSignatureBase64url))));
+                dep7.ReceiptGroups.Add(DEP7.ReceiptGroup.Create(options.QueueId, options.CashboxIdentification, options.EncryptionKeyBase64, options.CertificateBase64, storage.JournalATTableByTimeStamp().OrderBy(j => j.TimeStamp).Select(j => string.Concat(j.JWSHeaderBase64url, ".", j.JWSPayloadBase64url, ".", j.JWSSignatureBase64url))));
 
                 using (var fs = new System.IO.FileStream(options.OutputFilename, System.IO.FileMode.Create))
                 {
@@ -36,7 +36,7 @@ namespace OfflineQueueExportRKSV
                 }
 
                 decimal TurnoverTotal = 0.0m;
-                byte[] CashBoxKeyBytes = Convert.FromBase64String(options.CashBoxKeyBase64);
+                byte[] CashBoxKeyBytes = Convert.FromBase64String(options.EncryptionKeyBase64);
 
                 using (var fs = new System.IO.FileStream($"{options.OutputFilename}.turnover", System.IO.FileMode.Create))
                 using (var sw = new System.IO.StreamWriter(fs, Encoding.UTF8))

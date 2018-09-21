@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace SigningProofingWithCertificate
+namespace JWTProofingWithCertificate
 {
     internal class ProgramOptions
     {

@@ -4,17 +4,17 @@ Easy-to-use tools prepared for helping on common procedures.
 ## AT folder
 Contains the Austrian localized utilities.
 
-### [OfflineQueueExportEFRKSV](doc/at/README.md#offlinequeueexportefrksv)
+### [OfflineQueueExportEFRKSV](at/README.md#offlinequeueexportefrksv)
 Provides a way to export the DEP format to a file starting from a MS SQL Server database when the related service is offline.
 
 
-### [OfflineQueueExportRKSVSQLite](doc/at/README.md#offlinequeueexportrksvsqlite)
+### [OfflineQueueExportRKSVSQLite](at/README.md#offlinequeueexportrksvsqlite)
 Provides a way to export the DEP format to a file starting from a SQLite database when the related service is offline.
 
 ## Common folder
 Contains utilities that can be used regardless the country where the fiskaltrust.service is configured on.
 
-### [JWTProofingWithCertificate](doc/common/README.md#jwtproofingwithcertificate)
+### [JWTProofingWithCertificate](common/README.md#jwtproofingwithcertificate)
 Proofs that the JWT content is signed with a private key whose public key is stored inside the provided certificate.
 
 

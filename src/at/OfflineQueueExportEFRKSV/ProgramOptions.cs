@@ -10,22 +10,22 @@ namespace OfflineQueueExportRKSV
 {
     internal class ProgramOptions
     {
-        [Option(longName: "connectionstring", Required = true, HelpText = "ConnectionString to SQL-Database.")]
+        [Option(longName: "connectionstring", Required = true, HelpText = "Connection string to the MS SQL Server database.")]
         public string ConnectionString { get; set; }
 
-        [Option(longName: "queueid", Required = true, HelpText = "QueueId where configuration will be changed.")]
+        [Option(longName: "queueid", Required = true, HelpText = "Queue Id to be exported.")]
         public Guid QueueId { get; set; }
 
-        [Option(longName: "cashboxidentification", Required = true, HelpText = "CashboxIdentification of the CashBox")]
+        [Option(longName: "cashboxidentification", Required = true, HelpText = "CashboxIdentification of the Queue.")]
         public string CashboxIdentification { get; set; }
 
-        [Option(longName: "cashboxkeybase64", Required = true, HelpText = "CashBoxKeyBase64 for the CashBox")]
-        public string CashBoxKeyBase64 { get; set; }
+        [Option(longName: "encryptionkeybase64", Required = true, HelpText = "EncryptionKeyBase64 of the Queue.")]
+        public string EncryptionKeyBase64 { get; set; }
 
-        [Option(longName: "certificatebase64", Required = false, HelpText = "CertificateBase64 for the CashBox")]
+        [Option(longName: "certificatebase64", Required = false, HelpText = "Certificate serialized in Base64 of the Signature Creation Unit.")]
         public string CertificateBase64 { get; set; }
 
-        [Option(longName: "outputfilename", Required = true, HelpText = "OutputFilename for the Export")]
+        [Option(longName: "outputfilename", Required = true, HelpText = "Path of the output file for the DEP export.")]
         public string OutputFilename { get; set; }
 
         public const int MaxParamValueLength = 8 * 1024;

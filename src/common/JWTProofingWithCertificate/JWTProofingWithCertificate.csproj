@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E47BDCD9-F59E-4D3C-8C8B-88A33AA795C0}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>SigningProofingWithCertificate</RootNamespace>
-    <AssemblyName>SigningProofingWithCertificate</AssemblyName>
+    <RootNamespace>JWTProofingWithCertificate</RootNamespace>
+    <AssemblyName>JWTProofingWithCertificate</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
