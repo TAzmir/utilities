@@ -35,7 +35,6 @@ steps:
     restoreSolution: '**\*.sln'
     feedsToUse: config
     nugetConfigPath: nuget.config
-    externalFeedCredentials: 'sysdev4u-dev'
 
 - task: VSBuild@1
   displayName: Build solution **\*.sln
